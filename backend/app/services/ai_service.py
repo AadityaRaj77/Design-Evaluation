@@ -5,6 +5,8 @@ from openai import AsyncOpenAI
 
 from app.core.config import GROQ_API_KEY
 from app.prompts.critique_prompt import DESIGN_CRITIQUE_PROMPT
+from app.schemas.response_schema import DesignReviewResponse
+from app.core.logger import logger
 
 
 client = AsyncOpenAI(
@@ -15,7 +17,11 @@ client = AsyncOpenAI(
 
 async def analyze_ui_image(image_bytes):
 
+    logger.info("Starting UI analysis")
+
     base64_image = base64.b64encode(image_bytes).decode("utf-8")
+
+    logger.info("Sending request to Groq vision model")
 
     response = await client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
@@ -43,6 +49,8 @@ async def analyze_ui_image(image_bytes):
         temperature=0.4
     )
 
+    logger.info("Received response from model")
+
     content = response.choices[0].message.content
 
     try:
@@ -59,9 +67,17 @@ async def analyze_ui_image(image_bytes):
 
         parsed = json.loads(cleaned)
 
-        return parsed
+        logger.info("JSON parsed successfully")
+
+        validated = DesignReviewResponse(**parsed)
+
+        logger.info("Response schema validated successfully")
+
+        return validated.model_dump()
 
     except Exception as e:
+
+        logger.error(f"Parsing failed: {str(e)}")
 
         return {
             "error": "Invalid JSON response",
