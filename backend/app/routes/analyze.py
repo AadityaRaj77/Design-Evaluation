@@ -1,5 +1,7 @@
 from fastapi import APIRouter, UploadFile, File
 
+from app.services.ai_service import analyze_ui_image
+
 router = APIRouter()
 
 
@@ -8,7 +10,8 @@ async def analyze_design(
     file: UploadFile = File(...)
 ):
 
-    return {
-        "message": "Pipeline working",
-        "filename": file.filename
-    }
+    image_bytes = await file.read()
+
+    result = await analyze_ui_image(image_bytes)
+
+    return result
