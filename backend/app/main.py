@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.analyze import router as analyze_router
+from app.core.database import init_db
 
 app = FastAPI(
     title="AI Design Reviewer",
@@ -25,3 +26,8 @@ def health_check():
         "status": "running",
         "service": "AI Design Reviewer API"
     }
+
+@app.on_event("startup")
+def on_startup():
+
+    init_db()
