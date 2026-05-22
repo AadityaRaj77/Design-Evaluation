@@ -14,12 +14,12 @@ class Suggestion(BaseModel):
 
 
 class DesignReviewResponse(BaseModel):
-    overall_score: int
+    overall_score: float
     confidence: float
 
     summary: Dict[str, str]
 
-    metrics: Dict[str, int]
+    metrics: Dict[str, float]
 
     issues: List[Issue]
 

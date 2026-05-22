@@ -16,7 +16,8 @@ def extract_dominant_colors(image_path, num_colors=5):
     most_common = Counter(pixels).most_common(num_colors)
 
     dominant_colors = [
-        color[0] for color in most_common
+    tuple(int(c) for c in color[0])
+    for color in most_common
     ]
 
     return dominant_colors

@@ -1,29 +1,31 @@
-from paddleocr import PaddleOCR
+import easyocr
 
-ocr = PaddleOCR(
-    use_angle_cls=True,
-    lang='en'
-)
+reader = easyocr.Reader(['en'])
 
 
 def extract_text_blocks(image_path):
 
-    results = ocr.ocr(image_path)
+    results = reader.readtext(image_path)
 
     extracted = []
 
-    for line in results[0]:
+    for result in results:
 
-        bbox = line[0]
+        try:
 
-        text = line[1][0]
+            bbox = result[0]
+            text = result[1]
+            confidence = result[2]
+            extracted.append({
+                "text": text,
+                "confidence": float(confidence),
+                "bbox": [
+                  [int(point[0]), int(point[1])]
+                  for point in bbox
+                ]
+            })
 
-        confidence = line[1][1]
-
-        extracted.append({
-            "text": text,
-            "confidence": confidence,
-            "bbox": bbox
-        })
+        except Exception:
+            continue
 
     return extracted
