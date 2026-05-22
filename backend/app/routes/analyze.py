@@ -7,6 +7,12 @@ from app.services.ai_service import analyze_ui_image
 from app.services.vision_service import extract_dominant_colors
 from app.services.ocr_service import extract_text_blocks
 from app.services.text_analysis_service import compute_text_density
+from app.services.layout_service import (
+    compute_whitespace_ratio,
+    compute_edge_density
+)
+from app.services.component_service import detect_layout_blocks
+from app.services.layout_service import compute_spacing_consistency
 
 router = APIRouter()
 
@@ -35,8 +41,13 @@ async def analyze_design(
     colors = extract_dominant_colors(file_path)
 
     text_blocks = extract_text_blocks(file_path)
-
+    layout_blocks = detect_layout_blocks(file_path)
+    spacing_consistency = compute_spacing_consistency(
+    layout_blocks
+    )
     density = compute_text_density(text_blocks)
+    whitespace_ratio = compute_whitespace_ratio(file_path)
+    edge_density = compute_edge_density(file_path)
     vision_metrics = {
     "dominant_colors": colors,
     "text_density": density,
@@ -44,13 +55,20 @@ async def analyze_design(
     "sample_text": [
         block["text"]
         for block in text_blocks[:10]
-        ]
+        ],
+    "whitespace_ratio": whitespace_ratio,
+    "edge_density": edge_density,
+    "layout_block_count": len(layout_blocks),
+    "spacing_consistency": spacing_consistency,
      }
     result = await analyze_ui_image(contents, vision_metrics)
 
 
     result["dominant_colors"] = colors
     result["text_density"] = density
+    result["whitespace_ratio"] = whitespace_ratio
+    result["edge_density"] = edge_density
     result["detected_text"] = text_blocks[:5]
+    result["layout_blocks"] = layout_blocks[:10]
 
     return result
