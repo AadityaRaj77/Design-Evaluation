@@ -15,7 +15,7 @@ client = AsyncOpenAI(
 )
 
 
-async def analyze_ui_image(image_bytes):
+async def analyze_ui_image(image_bytes, vision_metrics):
 
     logger.info("Starting UI analysis")
 
@@ -35,7 +35,21 @@ async def analyze_ui_image(image_bytes):
                 "content": [
                     {
                         "type": "text",
-                        "text": "Analyze this UI screenshot critically."
+                        "text": f"""
+                         Analyze this UI screenshot critically.
+
+                         Additional extracted metrics:
+
+                         {json.dumps(vision_metrics, indent=2)}
+
+                         Use these measurable signals while evaluating:
+                        - typography
+                        - spacing
+                        - hierarchy
+                        - visual clarity
+                        - density
+                        - CTA prominence
+                        """
                     },
                     {
                         "type": "image_url",

@@ -37,8 +37,17 @@ async def analyze_design(
     text_blocks = extract_text_blocks(file_path)
 
     density = compute_text_density(text_blocks)
+    vision_metrics = {
+    "dominant_colors": colors,
+    "text_density": density,
+    "detected_text_count": len(text_blocks),
+    "sample_text": [
+        block["text"]
+        for block in text_blocks[:10]
+        ]
+     }
+    result = await analyze_ui_image(contents, vision_metrics)
 
-    result = await analyze_ui_image(contents)
 
     result["dominant_colors"] = colors
     result["text_density"] = density
