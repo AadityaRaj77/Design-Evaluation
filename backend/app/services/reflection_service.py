@@ -7,4 +7,7 @@ def should_refine(
         10
     )
 
-    return quality_score < 7
+    if quality_score < 7:
+        return True
+
+    return False

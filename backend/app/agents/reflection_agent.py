@@ -2,8 +2,6 @@ from openai import AsyncOpenAI
 
 from app.core.config import GROQ_API_KEY
 
-from app.schemas.agent_schema import AgentResponse
-
 from app.services.agent_utils import parse_json
 
 
@@ -13,42 +11,50 @@ client = AsyncOpenAI(
 )
 
 
-async def analyze_typography(
-    vision_metrics
+async def refine_critique(
+    aggregated_result,
+    evaluation
 ):
 
     prompt = f"""
-You are a senior typography and UI readability expert.
+You are an expert AI critique refinement system.
 
-Analyze ONLY:
-- typography hierarchy
-- readability
-- text density
-- CTA prominence
-- information overload
-- heading clarity
-- visual rhythm
+Your task:
+Improve the following design critique.
 
-Metrics:
+Evaluator Feedback:
+{evaluation}
 
-{vision_metrics}
+Original Critique:
+{aggregated_result}
+
+Goals:
+- remove generic advice
+- increase specificity
+- improve actionability
+- remove redundancy
+- improve clarity
+- strengthen reasoning
 
 Return STRICT JSON:
 
 {{
-    "score": number,
-    "issues": [],
-    "suggestions": []
+    "refined_summary": {{
+        "strength": "string",
+        "weakness": "string"
+    }},
+    "refined_issues": [],
+    "refined_suggestions": []
 }}
 """
 
     response = await client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=[
-            {{
+            {
                 "role": "user",
                 "content": prompt
-            }}
+            }
         ],
         temperature=0.2
     )
@@ -57,6 +63,4 @@ Return STRICT JSON:
 
     parsed = parse_json(content)
 
-    validated = AgentResponse(**parsed)
-
-    return validated.model_dump()
+    return parsed

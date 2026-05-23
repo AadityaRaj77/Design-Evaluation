@@ -14,7 +14,8 @@ client = AsyncOpenAI(
 
 
 async def analyze_layout(
-    vision_metrics
+    vision_metrics,
+    memory_context=None
 ):
 
     prompt = f"""
@@ -31,6 +32,10 @@ Analyze ONLY:
 Metrics:
 
 {vision_metrics}
+
+Historical Similar Analyses:
+
+{memory_context}
 
 Return STRICT JSON:
 
