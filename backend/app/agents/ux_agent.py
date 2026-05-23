@@ -36,11 +36,29 @@ Metrics:
 
 Return STRICT JSON:
 
-{{
+{
     "score": number,
-    "issues": [],
-    "suggestions": []
-}}
+
+    "issues": [
+        {
+            "severity": "critical | medium | low",
+            "title": "string",
+            "reason": "string"
+        }
+    ],
+
+    "suggestions": [
+        {
+            "priority": 1,
+            "action": "string"
+        }
+    ]
+}
+
+Severity Guidelines:
+- critical = major UX or hierarchy failure
+- medium = noticeable quality degradation
+- low = polish-level issue
 """
 
     response = await client.chat.completions.create(

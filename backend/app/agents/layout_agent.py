@@ -29,6 +29,14 @@ Analyze ONLY:
 - clutter
 - section organization
 
+Rules:
+- NEVER give generic advice
+- ALWAYS reference specific layout patterns
+- Suggestions must be actionable
+- Avoid repeating typography or color feedback
+- Focus on measurable layout problems
+- Critique should sound like a senior product designer
+
 Metrics:
 
 {vision_metrics}
@@ -39,11 +47,29 @@ Historical Similar Analyses:
 
 Return STRICT JSON:
 
-{{
+{
     "score": number,
-    "issues": [],
-    "suggestions": []
-}}
+
+    "issues": [
+        {
+            "severity": "critical | medium | low",
+            "title": "string",
+            "reason": "string"
+        }
+    ],
+
+    "suggestions": [
+        {
+            "priority": 1,
+            "action": "string"
+        }
+    ]
+}
+
+Severity Guidelines:
+- critical = major UX or hierarchy failure
+- medium = noticeable quality degradation
+- low = polish-level issue
 """
 
     response = await client.chat.completions.create(

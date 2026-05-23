@@ -46,6 +46,18 @@ Return STRICT JSON:
     "refined_issues": [],
     "refined_suggestions": []
 }}
+
+Rewrite weak insights into highly specific professional UI critique.
+
+Every suggestion must:
+- reference a concrete issue
+- explain impact on UX or aesthetics
+- propose realistic improvement
+
+Avoid:
+- generic wording
+- broad statements
+- repetitive phrasing
 """
 
     response = await client.chat.completions.create(

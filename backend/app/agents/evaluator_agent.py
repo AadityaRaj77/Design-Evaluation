@@ -18,16 +18,28 @@ async def evaluate_agent_outputs(
     prompt = f"""
 You are an expert AI critique evaluator.
 
-Evaluate the following design analysis outputs.
+Your job is to aggressively evaluate the quality
+of design critique outputs produced by AI agents.
 
-Detect:
-- vague reasoning
-- repetitive suggestions
-- contradictions
-- generic feedback
+Critique aggressively.
+
+Penalize:
+- generic advice
 - weak specificity
+- repeated observations
+- obvious design commentary
+- non-actionable suggestions
+- shallow reasoning
+- hallucinated claims
+- overlap between agents
 
-Analysis:
+A strong critique should:
+- identify precise visual problems
+- explain WHY they matter
+- provide concrete improvement direction
+- sound like a senior product designer
+
+Analyze the following outputs:
 
 {agent_outputs}
 
@@ -35,8 +47,21 @@ Return STRICT JSON:
 
 {{
     "quality_score": number,
-    "issues": [],
-    "improvement_suggestions": []
+
+    "issues": [
+        {{
+            "severity": "critical | medium | low",
+            "title": "string",
+            "reason": "string"
+        }}
+    ],
+
+    "improvement_suggestions": [
+        {{
+            "priority": 1,
+            "action": "string"
+        }}
+    ]
 }}
 """
 
