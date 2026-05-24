@@ -58,6 +58,11 @@ Severity Guidelines:
 - critical = major UX or hierarchy failure
 - medium = noticeable quality degradation
 - low = polish-level issue
+
+If possible, reference specific screen regions:
+- top_section
+- middle_section
+- bottom_section
 """
 
     response = await client.chat.completions.create(
