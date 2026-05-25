@@ -3,10 +3,16 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.routes.analyze import router as analyze_router
 from app.core.database import init_db
+from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(
     title="AI Design Reviewer",
     version="1.0.0"
+)
+app.mount(
+    "/uploads",
+    StaticFiles(directory="uploads"),
+    name="uploads"
 )
 
 app.add_middleware(
