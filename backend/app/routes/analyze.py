@@ -48,7 +48,16 @@ async def analyze_design(
         UPLOAD_DIR,
         unique_filename
     )
-    image = cv2.imread(file_path)
+    # image = cv2.imread(file_path)
+    absolute_path = os.path.abspath(file_path)
+
+    image = cv2.imread(absolute_path)
+
+    if image is None:
+
+      raise Exception(
+        f"Failed to load image: {absolute_path}"
+      )
     image_height, image_width = image.shape[:2]
 
     contents = await file.read()

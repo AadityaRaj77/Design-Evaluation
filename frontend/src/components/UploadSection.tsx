@@ -1,6 +1,11 @@
 import { useState } from "react";
+
+import { motion } from "framer-motion";
+
 import API from "../services/api";
+
 import type { AnalysisResponse } from "../types/analysis";
+
 import { Layout, Type, Palette, MonitorSmartphone } from "lucide-react";
 
 export default function UploadSection() {
@@ -155,13 +160,24 @@ export default function UploadSection() {
       {/* Result Dashboard */}
 
       {result && (
-        <div
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.5,
+          }}
           className="
-          grid
-          grid-cols-1
-          lg:grid-cols-2
-          gap-8
-        "
+            grid
+            grid-cols-1
+            lg:grid-cols-2
+            gap-8
+          "
         >
           {/* LEFT SIDE */}
 
@@ -280,148 +296,161 @@ export default function UploadSection() {
                 </div>
               </div>
 
-              <div
+              <motion.div
+                initial={{
+                  scale: 0.7,
+                  opacity: 0,
+                }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                }}
+                transition={{
+                  duration: 0.5,
+                }}
                 className="
-                w-32
-                h-32
-                rounded-full
-                border-8
-                border-white
-                flex
-                items-center
-                justify-center
-                text-3xl
-                font-bold
-              "
+                  w-32
+                  h-32
+                  rounded-full
+                  border-8
+                  border-white
+                  flex
+                  items-center
+                  justify-center
+                  text-3xl
+                  font-bold
+                "
               >
                 {result.aggregated_result.overall_score}
-              </div>
+              </motion.div>
             </div>
+
+            {/* Agent Cards */}
+
             <div
               className="
-  grid
-  grid-cols-2
-  gap-4
-  mb-10
-"
+              grid
+              grid-cols-2
+              gap-4
+              mb-10
+            "
             >
-              <div
-                className="
-    border
-    border-zinc-800
-    rounded-2xl
-    p-5
-    bg-zinc-900/40
-  "
-              >
-                <div
-                  className="
-      flex
-      items-center
-      justify-between
-    "
-                >
-                  <Layout className="w-5 h-5 text-zinc-400" />
+              {[
+                {
+                  label: "Layout",
+                  icon: Layout,
+                  score: result.agent_outputs.layout.score,
+                },
 
-                  <div className="text-2xl font-bold">
-                    {result.agent_outputs.layout.score}
-                  </div>
-                </div>
+                {
+                  label: "Typography",
+                  icon: Type,
+                  score: result.agent_outputs.typography.score,
+                },
 
-                <div className="mt-4 text-zinc-400">Layout</div>
-              </div>
+                {
+                  label: "Colors",
+                  icon: Palette,
+                  score: result.agent_outputs.color.score,
+                },
 
-              <div
-                className="
-    border
-    border-zinc-800
-    rounded-2xl
-    p-5
-    bg-zinc-900/40
-  "
-              >
-                <div
-                  className="
-      flex
-      items-center
-      justify-between
-    "
-                >
-                  <Type className="w-5 h-5 text-zinc-400" />
+                {
+                  label: "UX",
+                  icon: MonitorSmartphone,
+                  score: result.agent_outputs.ux.score,
+                },
+              ].map((item, index) => {
+                const Icon = item.icon;
 
-                  <div className="text-2xl font-bold">
-                    {result.agent_outputs.typography.score}
-                  </div>
-                </div>
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{
+                      opacity: 0,
+                      y: 20,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                    }}
+                    transition={{
+                      delay: index * 0.08,
+                    }}
+                    className="
+                      border
+                      border-zinc-800
+                      rounded-2xl
+                      p-5
+                      bg-zinc-900/40
+                      hover:scale-[1.015]
+                      transition-all
+                      duration-300
+                    "
+                  >
+                    <div
+                      className="
+                      flex
+                      items-center
+                      justify-between
+                    "
+                    >
+                      <Icon
+                        className="
+                        w-5
+                        h-5
+                        text-zinc-400
+                      "
+                      />
 
-                <div className="mt-4 text-zinc-400">Typography</div>
-              </div>
+                      <div
+                        className="
+                        text-2xl
+                        font-bold
+                      "
+                      >
+                        {item.score}
+                      </div>
+                    </div>
 
-              <div
-                className="
-    border
-    border-zinc-800
-    rounded-2xl
-    p-5
-    bg-zinc-900/40
-  "
-              >
-                <div
-                  className="
-      flex
-      items-center
-      justify-between
-    "
-                >
-                  <Palette className="w-5 h-5 text-zinc-400" />
-
-                  <div className="text-2xl font-bold">
-                    {result.agent_outputs.color.score}
-                  </div>
-                </div>
-
-                <div className="mt-4 text-zinc-400">Colors</div>
-              </div>
-
-              <div
-                className="
-    border
-    border-zinc-800
-    rounded-2xl
-    p-5
-    bg-zinc-900/40
-  "
-              >
-                <div
-                  className="
-      flex
-      items-center
-      justify-between
-    "
-                >
-                  <MonitorSmartphone className="w-5 h-5 text-zinc-400" />
-
-                  <div className="text-2xl font-bold">
-                    {result.agent_outputs.ux.score}
-                  </div>
-                </div>
-
-                <div className="mt-4 text-zinc-400">UX</div>
-              </div>
+                    <div
+                      className="
+                      mt-4
+                      text-zinc-400
+                    "
+                    >
+                      {item.label}
+                    </div>
+                  </motion.div>
+                );
+              })}
             </div>
 
             {/* Issues */}
 
             <div className="space-y-4">
               {result.aggregated_result.issues.map((issue, index) => (
-                <div
+                <motion.div
                   key={index}
+                  initial={{
+                    opacity: 0,
+                    y: 20,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  transition={{
+                    delay: index * 0.08,
+                  }}
                   className="
                       border
                       border-zinc-800
                       rounded-2xl
                       p-5
                       bg-zinc-900/40
+                      hover:scale-[1.015]
+                      transition-all
+                      duration-300
                     "
                 >
                   <div
@@ -461,18 +490,19 @@ export default function UploadSection() {
                   >
                     {issue.reason}
                   </p>
-                </div>
+                </motion.div>
               ))}
             </div>
+
             {/* Suggestions */}
 
             <div className="mt-12">
               <div
                 className="
-    text-2xl
-    font-bold
-    mb-6
-  "
+                text-2xl
+                font-bold
+                mb-6
+              "
               >
                 Suggested Improvements
               </div>
@@ -480,31 +510,45 @@ export default function UploadSection() {
               <div className="space-y-4">
                 {result.aggregated_result.suggestions.map(
                   (suggestion, index) => (
-                    <div
+                    <motion.div
                       key={index}
+                      initial={{
+                        opacity: 0,
+                        y: 20,
+                      }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                      }}
+                      transition={{
+                        delay: index * 0.08,
+                      }}
                       className="
-            border
-            border-zinc-800
-            rounded-2xl
-            p-5
-            bg-zinc-900/40
-            flex
-            gap-5
-            items-start
-          "
+                        border
+                        border-zinc-800
+                        rounded-2xl
+                        p-5
+                        bg-zinc-900/40
+                        flex
+                        gap-5
+                        items-start
+                        hover:scale-[1.015]
+                        transition-all
+                        duration-300
+                      "
                     >
                       <div
                         className="
-            min-w-10
-            h-10
-            rounded-full
-            bg-white
-            text-black
-            flex
-            items-center
-            justify-center
-            font-bold
-          "
+                        min-w-10
+                        h-10
+                        rounded-full
+                        bg-white
+                        text-black
+                        flex
+                        items-center
+                        justify-center
+                        font-bold
+                      "
                       >
                         {suggestion.priority}
                       </div>
@@ -512,32 +556,32 @@ export default function UploadSection() {
                       <div>
                         <div
                           className="
-              text-zinc-500
-              text-sm
-              uppercase
-              tracking-widest
-              mb-2
-            "
+                          text-zinc-500
+                          text-sm
+                          uppercase
+                          tracking-widest
+                          mb-2
+                        "
                         >
                           Priority Fix
                         </div>
 
                         <div
                           className="
-              text-lg
-              leading-relaxed
-            "
+                          text-lg
+                          leading-relaxed
+                        "
                         >
                           {suggestion.action}
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ),
                 )}
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );
