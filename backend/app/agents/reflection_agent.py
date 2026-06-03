@@ -1,7 +1,8 @@
+import json
+
 from openai import AsyncOpenAI
 
 from app.core.config import GROQ_API_KEY
-
 from app.services.agent_utils import parse_json
 
 
@@ -15,7 +16,6 @@ async def refine_critique(
     aggregated_result,
     evaluation
 ):
-
     prompt = f"""
 You are an expert AI critique refinement system.
 
@@ -23,10 +23,10 @@ Your task:
 Improve the following design critique.
 
 Evaluator Feedback:
-{evaluation}
+{json.dumps(evaluation, indent=2)}
 
 Original Critique:
-{aggregated_result}
+{json.dumps(aggregated_result, indent=2)}
 
 Goals:
 - remove generic advice
@@ -58,11 +58,17 @@ Avoid:
 - generic wording
 - broad statements
 - repetitive phrasing
+
+Return ONLY valid JSON. No markdown. No explanation.
 """
 
     response = await client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=[
+            {
+                "role": "system",
+                "content": "Return only valid JSON. No markdown. No prose."
+            },
             {
                 "role": "user",
                 "content": prompt
@@ -72,7 +78,5 @@ Avoid:
     )
 
     content = response.choices[0].message.content
-
     parsed = parse_json(content)
-
     return parsed

@@ -7,6 +7,7 @@ from app.core.config import GROQ_API_KEY
 from app.prompts.critique_prompt import DESIGN_CRITIQUE_PROMPT
 from app.schemas.response_schema import DesignReviewResponse
 from app.core.logger import logger
+from app.services.agent_utils import parse_json
 
 
 client = AsyncOpenAI(
@@ -27,8 +28,16 @@ async def analyze_ui_image(image_bytes, vision_metrics):
         model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=[
             {
-                "role": "system",
-                "content": DESIGN_CRITIQUE_PROMPT
+             "role": "system",
+             "content": DESIGN_CRITIQUE_PROMPT + """
+
+             IMPORTANT:
+              Return ONLY valid JSON.
+              Do not use markdown.
+              Do not explain your reasoning.
+              Do not add text before JSON.
+              Do not add text after JSON.
+            """
             },
             {
                 "role": "user",
@@ -69,17 +78,7 @@ async def analyze_ui_image(image_bytes, vision_metrics):
 
     try:
 
-        cleaned = content.strip()
-
-        if cleaned.startswith("```json"):
-            cleaned = cleaned.replace("```json", "")
-
-        if cleaned.endswith("```"):
-            cleaned = cleaned[:-3]
-
-        cleaned = cleaned.strip()
-
-        parsed = json.loads(cleaned)
+        parsed = parse_json(content)
 
         logger.info("JSON parsed successfully")
 

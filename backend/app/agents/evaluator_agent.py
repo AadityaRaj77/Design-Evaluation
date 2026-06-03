@@ -1,7 +1,8 @@
+import json
+
 from openai import AsyncOpenAI
 
 from app.core.config import GROQ_API_KEY
-
 from app.services.agent_utils import parse_json
 
 
@@ -14,7 +15,6 @@ client = AsyncOpenAI(
 async def evaluate_agent_outputs(
     agent_outputs
 ):
-
     prompt = f"""
 You are an expert AI critique evaluator.
 
@@ -41,7 +41,7 @@ A strong critique should:
 
 Analyze the following outputs:
 
-{agent_outputs}
+{json.dumps(agent_outputs, indent=2)}
 
 Return STRICT JSON:
 
@@ -63,11 +63,17 @@ Return STRICT JSON:
         }}
     ]
 }}
+
+Return ONLY valid JSON. No markdown. No explanation.
 """
 
     response = await client.chat.completions.create(
         model="meta-llama/llama-4-scout-17b-16e-instruct",
         messages=[
+            {
+                "role": "system",
+                "content": "Return only valid JSON. No markdown. No prose."
+            },
             {
                 "role": "user",
                 "content": prompt
@@ -77,7 +83,5 @@ Return STRICT JSON:
     )
 
     content = response.choices[0].message.content
-
     parsed = parse_json(content)
-
     return parsed
